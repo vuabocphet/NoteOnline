@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".Home">
+
+    <LinearLayout
+        android:id="@+id/xxx"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/style_toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp">
+
+            <ImageView
+                android:id="@+id/file"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerVertical="true"
+                android:padding="6dp"
+                android:src="@drawable/file" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/app_name"
+                android:textColor="#607D8B"
+                android:textSize="19dp"
+                android:textStyle="bold" />
+
+
+            <ImageView
+                android:id="@+id/menu"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="6dp"
+                android:src="@drawable/menu" />
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:numColumns="2"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@id/xxx"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/gidview">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <ImageView
+        android:id="@+id/notnote"
+        android:layout_centerInParent="true"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/notnote"/>
+    <TextView
+        android:id="@+id/txnotnote"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="9dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/notnote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/notnote"/>
+
+
+    <RelativeLayout
+
+        android:background="@drawable/style_cirel"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:theme="@style/FloatingActionButton"
+        android:id="@+id/addNote">
+
+        <ImageView
+            android:padding="6dp"
+            android:layout_centerInParent="true"
+            android:layout_margin="5dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/add"/>
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

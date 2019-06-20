@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Ghi chú</string>
+    <string name="dev_name">Design By NguyenTinh</string>
+    <string name="save">Hoàn tất</string>
+    <string name="date">19/9/2019 10:30</string>
+    <string name="or">|</string>
+    <string name="signin">Đăng nhập</string>
+    <string name="share">Chia sẻ</string>
+    <string name="comment">Đánh giá</string>
+    <string name="exit">Thoát APP</string>
+    <string name="facebook_app_id">1821945707916485</string> <string name="fb_login_protocol_scheme">fb1821945707916485</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="dismiss">Đóng</string>
+    <string name="notnote">Không có dữ liệu</string>
+    <string name="note">Tiêu đề</string>
+    <string name="note_a">Mô tả chi tiết . . .</string>
+    <string name="err">Tối đa chỉ 20 kí tự</string>
+
+
+</resources>

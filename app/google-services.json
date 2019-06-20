@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "177785949749",
+    "firebase_url": "https://onlinestore-3ac1a.firebaseio.com",
+    "project_id": "onlinestore-3ac1a",
+    "storage_bucket": "onlinestore-3ac1a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177785949749:android:90cee973ae005618",
+        "android_client_info": {
+          "package_name": "com.vuabocphet.noteonline"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "177785949749-qr6d8d985udcimc1t3o0v4oi2p6ng2r3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5wEp1VhdH00UZz-Tss1iktNh2Ne82Hwo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "177785949749-qr6d8d985udcimc1t3o0v4oi2p6ng2r3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
