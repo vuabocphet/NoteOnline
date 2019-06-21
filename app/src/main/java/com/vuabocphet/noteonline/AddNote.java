@@ -18,10 +18,12 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
@@ -50,8 +52,12 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import spencerstudios.com.bungeelib.Bungee;
+
+import static android.text.InputType.TYPE_CLASS_TEXT;
+import static android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS;
 
 public class AddNote extends AppCompatActivity {
     IsRunningactivity isRunningActivity = new IsRunningactivity();
@@ -76,12 +82,14 @@ public class AddNote extends AppCompatActivity {
     private FirebaseStorage storage;
     private Typeface font;
     private EditText subject;
+    private String url_img = "";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Bungee.fade(this);
         Log.e("IS", isRunningActivity.isActivityRunning(Home.class, this) + "");
         mapped();
@@ -95,7 +103,7 @@ public class AddNote extends AppCompatActivity {
         storageRef = storage.getReferenceFromUrl("gs://onlinestore-3ac1a.appspot.com");
         mDatabase = FirebaseDatabase.getInstance().getReference();
         baseData = new BaseData(this);
-        baseDataALL=new BaseDataALL(this);
+        baseDataALL = new BaseDataALL(this);
         sharedPreferences = getSharedPreferences("NOTETEST", MODE_PRIVATE);
         sp = getSharedPreferences("ISRUNNING", MODE_PRIVATE);
         zoom = AnimationUtils.loadAnimation(this, R.anim.zoom);
@@ -109,8 +117,8 @@ public class AddNote extends AppCompatActivity {
         align = (ImageView) findViewById(R.id.align);
         subject = (EditText) findViewById(R.id.subject);
         date.setText(getDate());
-        date.setTypeface(font);
         save.setTypeface(font);
+
 
     }
 
@@ -135,6 +143,7 @@ public class AddNote extends AppCompatActivity {
 //note.setCompoundDrawablesWithIntrinsicBounds(null,null,null,);
         note.setEnabled(false);
         note.setAlpha(0.5f);
+
         subject.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -143,10 +152,9 @@ public class AddNote extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length()==20){
+                if (s.length() == 30) {
                     subject.setError(getString(R.string.err));
                 }
-                Log.e("LEG",s.length()+"");
                 if (s.length() == 0) {
                     note.setEnabled(false);
                     note.setAlpha(0.5f);
@@ -215,14 +223,10 @@ public class AddNote extends AppCompatActivity {
                                 Toast.makeText(AddNote.this, "Đã lưu trữ offline", Toast.LENGTH_SHORT).show();
                                 finish();
                             }
-                            NoteModel model = new NoteModel("" + Calendar.getInstance().getTimeInMillis(), subject.getText().toString().trim(), date.getText().toString().trim(), note.getText().toString(), String.valueOf(path));
-                            if (isInternetConnection() && !id.equals("")) {
-                                mDatabase.child(id).child("GhiChu").child(model.getId()).setValue(model);
-                                if (!path.equals("")) {
-                                    uploadImage(path, model.getId(), id);
-                                }
-                                finish();
 
+                            if (isInternetConnection() && !id.equals("")) {
+                                NoteModel model = new NoteModel("" + Calendar.getInstance().getTimeInMillis(), subject.getText().toString().trim(), date.getText().toString().trim(), note.getText().toString(), String.valueOf(path), url_img);
+                                uploadImage(path,model,id);
                             }
                         }
                     });
@@ -279,7 +283,7 @@ public class AddNote extends AppCompatActivity {
     private String getDate() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat dateformat = new SimpleDateFormat("dd/MMM/yyyy HH:mm");
-        String datetime = dateformat.format(c.getTime());
+        String datetime = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()) + "\t" + dateformat.format(c.getTime());
         return datetime;
     }
 
@@ -346,40 +350,41 @@ public class AddNote extends AppCompatActivity {
     }
 
 
-    private void uploadImage(String file, final String id, final String ID) {
+    private void uploadImage(String file, final NoteModel noteModel, final String id) {
+
+            Calendar calendar = Calendar.getInstance();
+            final StorageReference mountainsRef = storageRef.child("image" + calendar.getTimeInMillis() + "");
+            mountainsRef.putFile(Uri.fromFile(new File(file)))
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
+                            while (!urlTask.isSuccessful()) ;
+                            Uri downloadUrl = urlTask.getResult();
+                            noteModel.setUrl(String.valueOf(downloadUrl));
+                            mDatabase.child(id).child("GhiChu").child(noteModel.getId()).setValue(noteModel);
+                            finish();
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            Log.e("Failed", e.getMessage());
+                            return;
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        }
+                    });
 
 
-        Calendar calendar = Calendar.getInstance();
-        final StorageReference mountainsRef = storageRef.child("image" + calendar.getTimeInMillis() + "");
 
-        mountainsRef.putFile(Uri.fromFile(new File(file)))
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!urlTask.isSuccessful()) ;
-
-                        Uri downloadUrl = urlTask.getResult();
-                        com.vuabocphet.noteonline.model.Uri uri = new com.vuabocphet.noteonline.model.Uri(id, String.valueOf(downloadUrl));
-                        mDatabase.child(ID).child("IMG").push().setValue(uri);
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                        Log.e("Failed", e.getMessage());
-                        return;
-                    }
-                })
-                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-
-                    }
-                });
 
 
     }

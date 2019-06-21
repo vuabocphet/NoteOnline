@@ -48,6 +48,39 @@
         android:textColor="@color/white"
         android:textSize="13sp" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="5dp">
+        <TextView
+            android:textStyle="bold"
+            android:id="@+id/xxx"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chedo"/>
+        <Switch
+            android:id="@+id/sw"
+            android:layout_marginLeft="5dp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/xxx"/>
+    </RelativeLayout>
+
+    <Button
+        android:layout_margin="5dp"
+        android:id="@+id/intro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/style_bottom"
+        android:text="@string/introduct"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+
     <Button
         android:layout_margin="5dp"
         android:id="@+id/share"

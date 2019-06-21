@@ -14,27 +14,31 @@ import android.content.pm.Signature;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.GridView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +70,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
-import com.vuabocphet.noteonline.adapter.AdapterGid;
 import com.vuabocphet.noteonline.adapter.AdapterNote;
 import com.vuabocphet.noteonline.database.BaseData;
 import com.vuabocphet.noteonline.database.BaseDataALL;
@@ -88,7 +91,7 @@ public class Home extends AppCompatActivity {
     private ImageView file;
     private ImageView menu;
     private RelativeLayout addNote;
-    public Animation zoom, zoom_one, zoom_in;
+    public Animation zoom, zoom_one, zoom_in,cyc;
     SharedPreferences sp;
     SharedPreferences.Editor ed;
     private DatabaseReference mDatabase;
@@ -106,13 +109,12 @@ public class Home extends AppCompatActivity {
     private ArrayList<NoteModel> listFIREBASE = new ArrayList<>();
     private GetSQLite sqLite;
     private AdapterNote adapterNote;
-    private AdapterGid adapterGid;
-    private GridLayoutManager linearLayoutManager = new GridLayoutManager(this, 2);
-
+    private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     private LoadingDailog dialogx, dialogxx;
     private ImageView notnote;
     private TextView txnotnote;
     private BaseData baseData;
+    private Switch aSwitch;
     private BaseDataALL baseDataALL;
     private StorageReference storageRef;
     private FirebaseStorage storage;
@@ -122,12 +124,19 @@ public class Home extends AppCompatActivity {
     private long a;
     private String url;
     private BroadcastReceiver mNetworkReceiver;
+    private  RelativeLayout aLayout;
+
+    private GestureDetector gestureDetector;
+    int SWIPE=100;
+    int v=100;
+    private LinearLayout xxx;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
                     "com.vuabocphet.noteonline",
@@ -143,7 +152,7 @@ public class Home extends AppCompatActivity {
 
         }
         Bungee.zoom(this);
-        Log.e("WIDTH",getPixel()+"");
+        Log.e("WIDTH", getPixel() + "");
 
 
         mapped();
@@ -164,7 +173,11 @@ public class Home extends AppCompatActivity {
     }
 
 
+
+
     private void mapped() {
+        aLayout=findViewById(R.id.aLayout);
+        xxx=findViewById(R.id.xxx);
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReferenceFromUrl("gs://onlinestore-3ac1a.appspot.com");
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -183,12 +196,27 @@ public class Home extends AppCompatActivity {
         zoom = AnimationUtils.loadAnimation(this, R.anim.zoom);
         zoom_one = AnimationUtils.loadAnimation(this, R.anim.translate_dialog_out_setting);
         zoom_in = AnimationUtils.loadAnimation(this, R.anim.translate_dialog_in_setting);
+        boolean sw=sp.getBoolean("sw",true);
+        if (sw){
+            aLayout.setBackgroundColor(getResources().getColor(R.color.blackLight));
+
+        }else {
+            aLayout.setBackground(getResources().getDrawable(R.drawable.title_a));
+        }
+
+        gestureDetector=new GestureDetector(this,new MyGes());
+        gridView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                gestureDetector.onTouchEvent(motionEvent);
+                return false;
+            }
+        });
     }
 
 
     private void view() {
-        adapterNote = new AdapterNote(this, listSQL, uri);
-        //adapterGid=new AdapterGid(this,listSQL,uri);
+        adapterNote = new AdapterNote(this, listSQL);
         gridView.setLayoutManager(linearLayoutManager);
         gridView.setHasFixedSize(true);
         gridView.setAdapter(adapterNote);
@@ -198,6 +226,7 @@ public class Home extends AppCompatActivity {
     private void data() {
         final String id = sp.getString("id", "");
         if (isInternetConnection() && !id.equals("")) {
+
             insertSQLiteFirebase(id);
             getDataFirebase();
         }
@@ -233,36 +262,6 @@ public class Home extends AppCompatActivity {
 
         if (!id.equals("")) {
 
-            mDatabase.child(id).child("IMG").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    com.vuabocphet.noteonline.model.Uri uria = dataSnapshot.getValue(com.vuabocphet.noteonline.model.Uri.class);
-                    uri.add(uria);
-                    Log.e("SIZEURI", uri.size() + "");
-                    view();
-
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
 
             mDatabase.child(id).child("GhiChu").addChildEventListener(new ChildEventListener() {
                 @Override
@@ -385,7 +384,7 @@ public class Home extends AppCompatActivity {
             }
         });
 
-
+        aSwitch=dialog.findViewById(R.id.sw);
         imgFB = dialog.findViewById(R.id.imgFB);
         txFB = dialog.findViewById(R.id.txFB);
         loginFB = dialog.findViewById(R.id.login_button);
@@ -394,6 +393,29 @@ public class Home extends AppCompatActivity {
         logout = dialog.findViewById(R.id.logout);
         exit = dialog.findViewById(R.id.exit);
         dismis = dialog.findViewById(R.id.dismiss);
+        boolean sw=sp.getBoolean("sw",true);
+        if (sw){
+            aSwitch.setChecked(true);
+        }else {
+            aSwitch.setChecked(false);
+        }
+
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                ed=sp.edit();
+                if (b){
+                    ed.putBoolean("sw",true);
+                    ed.commit();
+                    aLayout.setBackgroundColor(getResources().getColor(R.color.blackLight));
+                }
+                else {
+                    ed.putBoolean("sw",false);
+                    ed.commit();
+                    aLayout.setBackground(getResources().getDrawable(R.drawable.title_a));
+                }
+            }
+        });
 
         dismis.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -612,62 +634,11 @@ public class Home extends AppCompatActivity {
         }
     }
 
-    private String uploadImage(String file, final String id, final String ID) {
 
-        if (listSQL != null && i < listSQL.size()) {
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Tải ảnh lên...");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
-            Calendar calendar = Calendar.getInstance();
-            final StorageReference mountainsRef = storageRef.child("image" + calendar.getTimeInMillis() + "");
-
-            mountainsRef.putFile(Uri.fromFile(new File(file)))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!urlTask.isSuccessful()) ;
-                            Uri downloadUrl = urlTask.getResult();
-                            mDatabase.child(ID).child("GhiChu").child("IMG").push().setValue(String.valueOf(downloadUrl));
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Log.e("Failed", e.getMessage());
-                            return;
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Đang tải" + (int) progress + "%");
-
-                            if (i == listSQL.size() - 1 && progress == 100) {
-                                {
-
-
-                                }
-                            }
-                        }
-                    });
-
-
-        }
-
-        return url;
-
-    }
 
     private void restart(boolean value) {
 
         if (value) {
-
 
 
         } else {
@@ -734,10 +705,32 @@ public class Home extends AppCompatActivity {
 
     }
 
-    public int getPixel(){
+    public int getPixel() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        return  metrics.widthPixels;
+        return metrics.widthPixels;
 
+    }
+
+    class MyGes extends GestureDetector.SimpleOnGestureListener{
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+            if (e2.getY()-e1.getY()>SWIPE && Math.abs(velocityY)>v){
+
+                ;
+            }
+
+            if (e1.getY()-e2.getY()>SWIPE && Math.abs(velocityY)>v){
+
+
+            }
+
+
+
+
+            return super.onFling(e1, e2, velocityX, velocityY);
+
+        }
     }
 }

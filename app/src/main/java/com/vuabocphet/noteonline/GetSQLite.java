@@ -27,7 +27,7 @@ public class GetSQLite {
 
         if (cursor!=null && cursor.moveToFirst()){
             do {
-                NoteModel model=new NoteModel(cursor.getInt(0)+"",cursor.getString(5),cursor.getString(1),cursor.getString(2),cursor.getString(3));
+                NoteModel model=new NoteModel(cursor.getInt(0)+"",cursor.getString(5),cursor.getString(1),cursor.getString(2),cursor.getString(3),"");
                 list.add(0,model);
             }while (cursor.moveToNext());
             Log.e("SIZE",list.size()+"");
@@ -47,7 +47,7 @@ public class GetSQLite {
 
         if (cursor!=null && cursor.moveToFirst()){
             do {
-                NoteModel model=new NoteModel(cursor.getString(4),cursor.getString(5),cursor.getString(1),cursor.getString(2),cursor.getString(3));
+                NoteModel model=new NoteModel(cursor.getString(4),cursor.getString(5),cursor.getString(1),cursor.getString(2),cursor.getString(3),"");
                 list.add(0,model);
             }while (cursor.moveToNext());
             Log.e("SIZE",list.size()+"");
@@ -68,7 +68,7 @@ public class GetSQLite {
 
         if (cursor!=null && cursor.moveToFirst()){
             do {
-                NoteModel model=new NoteModel(cursor.getString(4),cursor.getString(5),cursor.getString(1),cursor.getString(2),cursor.getString(3));
+                NoteModel model=new NoteModel(cursor.getString(4),cursor.getString(5),cursor.getString(1),cursor.getString(2),cursor.getString(3),"");
                 list.add(0,model);
             }while (cursor.moveToNext());
             Log.e("SIZE",list.size()+"");

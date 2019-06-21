@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    tools:context=".Home">
+    android:background="@color/blackLight"
+    tools:context=".Home"
+    android:id="@+id/aLayout">
 
     <LinearLayout
         android:id="@+id/xxx"
@@ -58,10 +59,6 @@
         android:numColumns="2"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
         android:layout_below="@id/xxx"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

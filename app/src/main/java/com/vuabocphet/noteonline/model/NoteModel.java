@@ -6,6 +6,7 @@ public class NoteModel {
     public String date;
     public String node;
     public String img;
+    public String url;
 
     public NoteModel() {
     }
@@ -50,11 +51,20 @@ public class NoteModel {
         this.img = img;
     }
 
-    public NoteModel(String id, String subject, String date, String node, String img) {
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public NoteModel(String id, String subject, String date, String node, String img, String url) {
         this.id = id;
         this.subject = subject;
         this.date = date;
         this.node = node;
         this.img = img;
+        this.url = url;
     }
 }

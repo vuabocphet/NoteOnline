@@ -8,11 +8,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.github.siyamed.shapeimageview.mask.PorterShapeImageView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.vuabocphet.noteonline.R;
 
 public class HoderNote extends RecyclerView.ViewHolder {
-    public CircularImageView imgNote;
+    public ImageView imgNote;
     public TextView txtNote,i;
     public TextView txtDate;
     public TextView txtSubject;
@@ -21,7 +22,7 @@ public class HoderNote extends RecyclerView.ViewHolder {
 
     public HoderNote(@NonNull View itemView) {
         super(itemView);
-        imgNote = (CircularImageView) itemView.findViewById(R.id.img_note);
+        imgNote =  itemView.findViewById(R.id.img_note);
         txtNote = (TextView) itemView.findViewById(R.id.txtNote);
         txtDate = (TextView) itemView.findViewById(R.id.txtDate);
         i = (TextView) itemView.findViewById(R.id.i);
